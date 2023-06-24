@@ -1,6 +1,6 @@
 <template>
   <div class="idle">
-    <h2>C'est pas ton tour</h2>
+    <h2>Not your turn to deal.</h2>
   </div>
 </template>
 

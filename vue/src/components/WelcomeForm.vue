@@ -1,13 +1,13 @@
 <template>
   <div class="welcome">
     <h1>Ayayahuasca!</h1>
-    <h2>Entre le code qui s'affiche sur l'écran principal!</h2>
+    <h2>Enter the code displayed on the main screen!</h2>
     <div class="welcome-error" :class="{ 'is-visible': error }">
-      Mauvais code d'activation
+      Invalid activation code.
     </div>
     <form @submit.prevent="login">
       <input type="number" v-model="activationCode" />
-      <button>Rejoindre la partie</button>
+      <button>Join Game</button>
     </form>
   </div>
 </template>

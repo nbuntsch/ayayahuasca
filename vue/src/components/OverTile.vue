@@ -1,7 +1,7 @@
 <template>
   <div class="over">
-    <h1>Partie terminée!</h1>
-    <button @click="reload">Démarrer une nouvelle partie</button>
+    <h1>Game Over!</h1>
+    <button @click="reload">Start a New Game</button>
   </div>
 </template>
 

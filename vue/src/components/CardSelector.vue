@@ -1,6 +1,6 @@
 <template>
   <div class="cards">
-    <h2>Choisis une carte</h2>
+    <h2>Select a card.</h2>
     <div class="cards-items">
       <div v-for="card in randomCards" :key="card.id" @click="play(card)">
         <card-item :card="card"></card-item>
