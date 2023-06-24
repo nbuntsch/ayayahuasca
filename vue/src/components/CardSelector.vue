@@ -1,13 +1,12 @@
 <template>
-  <h2>Card selector</h2>
   <div class="cards">
-    <div v-for="card in randomCards" :key="card.id">
-      <div @click="play(card)">
+    <h2>Choisis une carte</h2>
+    <div class="cards-items">
+      <div v-for="card in randomCards" :key="card.id" @click="play(card)">
         <card-item :card="card"></card-item>
       </div>
     </div>
   </div>
-  <img :src="imgUrl" alt="" />
 </template>
 
 <script>
@@ -30,7 +29,6 @@ export default {
   data: () => ({
     cards: [],
     randomCards: [],
-    imgUrl: '',
   }),
 
   mounted() {
@@ -59,14 +57,29 @@ export default {
 
 <style lang="scss">
 .cards {
+  height: 100%;
   display: flex;
+  flex-direction: column;
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    text-align: center;
+  }
 }
 
-.cards > div {
-  width: calc(100% / 3);
+.cards-items {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 
-  img {
-    width: 100%;
+  > div {
+    flex-basis: 100%;
+
+    img {
+      max-height: 100%;
+    }
   }
 }
 </style>

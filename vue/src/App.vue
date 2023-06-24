@@ -1,15 +1,14 @@
 <template>
   <div class="container">
-    <h1>Ayayahuasca!</h1>
-    <div v-if="game.overdose">
+    <!-- <div v-if="game.overdose">
       overdose: {{ game.overdose }}<br />
       mood: {{ game.mood }}<br />
       excitement: {{ game.excitement }}
-    </div>
-    <button @click="createGame">Create game</button>
-    <button @click="startGame">Start game</button>
+    </div> -->
+    <!-- <button @click="createGame">Create game</button>
+    <button @click="startGame">Start game</button> -->
     <welcome-form v-if="!gameId" @login="login"></welcome-form>
-    <div v-if="player">
+    <element v-if="player">
       <waiting-tile v-if="game.status === 'idle'"></waiting-tile>
       <idle-tile
         v-if="game.status === 'playing' && player.status === 'idle'"
@@ -20,7 +19,7 @@
         @play="play"
       ></card-selector>
       <over-tile v-if="game.status === 'over'"></over-tile>
-    </div>
+    </element>
   </div>
 </template>
 
@@ -199,11 +198,16 @@ export default {
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Lato, sans-serif;
 }
 .container {
   max-width: 500px;
+  height: 100vh;
   margin: 0 auto;
   padding: 20px;
-  background: aqua;
 }
 </style>
