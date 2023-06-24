@@ -11,9 +11,10 @@
   <div v-if="player">
     <idle-tile v-if="player.status === 'idle'"></idle-tile>
     <card-selector
-      v-if="player.status === 'playing'"
+      v-if="game.status === 'playing' && player.status === 'playing'"
       @play="play"
     ></card-selector>
+    <over-tile v-if="game.status === 'over'"></over-tile>
   </div>
 </template>
 
@@ -32,12 +33,14 @@ import { v4 as uuidv4 } from 'uuid';
 import WelcomeForm from '@/components/WelcomeForm.vue';
 import IdleTile from '@/components/IdleTile.vue';
 import CardSelector from '@/components/CardSelector.vue';
+import OverTile from '@/components/OverTile.vue';
 
 export default {
   components: {
     WelcomeForm,
     IdleTile,
     CardSelector,
+    OverTile,
   },
   data: () => ({
     game: {},
@@ -83,6 +86,11 @@ export default {
       this.game.overdose += card.overdose;
       this.game.mood += card.mood;
       this.game.excitement += card.excitement;
+
+      if (this.game.overdose >= 100) {
+        this.game.status = 'over';
+      }
+
       this.game.players[this.playerIndex].status = 'hasplayed';
       const idlePlayers = this.game.players.filter(
         (player) => player.status === 'idle'
