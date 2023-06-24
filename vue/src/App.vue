@@ -51,6 +51,67 @@ export default {
     },
   },
   methods: {
+    login(gameId) {
+      this.gameId = gameId;
+      this.createPlayer();
+      this.getGame();
+    },
+    createPlayer() {
+      const gameRef = doc(db, 'games', this.gameId);
+      getDoc(gameRef).then((game) => {
+        const data = game.data();
+        data.players.push({ id: uuidv4(), status: 'idle' });
+        updateDoc(gameRef, data);
+        this.playerIndex = data.players.length - 1;
+      });
+    },
+    getGame() {
+      onSnapshot(doc(db, 'games', this.gameId), (snapshot) => {
+        this.game = snapshot.data();
+      });
+    },
+    updateGame() {
+      const game = doc(db, 'games', this.gameId);
+      updateDoc(game, this.game);
+    },
+    chooseFirstPlayer() {
+      const randomIndex = Math.floor(Math.random() * this.game.players.length);
+      this.game.players[randomIndex].status = 'playing';
+      this.updateGame();
+    },
+    play(card) {
+      this.game.overdose += card.overdose;
+      this.game.mood += card.mood;
+      this.game.excitement += card.excitement;
+      this.game.players[this.playerIndex].status = 'hasplayed';
+      const idlePlayers = this.game.players.filter(
+        (player) => player.status === 'idle'
+      );
+
+      const randomStack = [];
+      idlePlayers.forEach((player) => {
+        randomStack.push(player.id);
+      });
+      let nextPlayerIndex;
+      if (randomStack.length === 0) {
+        this.game.players.forEach((player) => {
+          player.status = 'idle';
+        });
+        nextPlayerIndex = Math.floor(Math.random() * this.game.players.length);
+      } else {
+        const randomIndex = Math.floor(Math.random() * randomStack.length);
+        const nextPlayerId = idlePlayers[randomIndex].id;
+        nextPlayerIndex = this.game.players.findIndex(
+          (player) => player.id === nextPlayerId
+        );
+      }
+
+      setTimeout(() => {
+        this.game.players[nextPlayerIndex].status = 'playing';
+        this.updateGame();
+      }, 200);
+    },
+    // tmp
     createGame() {
       const gameId = Math.floor(100000 + Math.random() * 900000);
       const game = {
@@ -66,46 +127,10 @@ export default {
 
       alert('game id : i' + gameId);
     },
-    login(gameId) {
-      this.gameId = gameId;
-      this.createPlayer();
-      onSnapshot(doc(db, 'games', this.gameId), (snapshot) => {
-        this.game = snapshot.data();
-      });
-    },
-    createPlayer() {
-      getDoc(doc(db, 'games', this.gameId)).then((game) => {
-        const data = game.data();
-        data.players.push({ id: uuidv4(), status: 'idle' });
-        const gameDoc = doc(db, 'games', this.gameId);
-        updateDoc(gameDoc, data);
-        this.playerIndex = data.players.length - 1;
-      });
-    },
     startGame() {
       this.game.status = 'playing';
       this.updateGame();
       this.chooseFirstPlayer();
-    },
-    updateGame() {
-      const game = doc(db, 'games', this.gameId);
-      updateDoc(game, this.game);
-    },
-    chooseFirstPlayer() {
-      const randomIndex = Math.floor(Math.random() * this.game.players.length);
-      this.game.players[randomIndex].status = 'playing';
-      this.updateGame();
-    },
-    play(card) {
-      this.game.overdose += card.overdose;
-      this.game.mood += card.mood;
-      this.game.excitement += card.excitement;
-      this.game.players[this.playerIndex].status = 'idle';
-      const randomIndex = Math.floor(Math.random() * this.game.players.length);
-      setTimeout(() => {
-        this.game.players[randomIndex].status = 'playing';
-        this.updateGame();
-      }, 200);
     },
   },
 };
