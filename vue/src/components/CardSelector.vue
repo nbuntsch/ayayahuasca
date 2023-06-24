@@ -76,10 +76,6 @@ export default {
 
   > div {
     flex-basis: 100%;
-
-    img {
-      max-height: 100%;
-    }
   }
 }
 </style>
