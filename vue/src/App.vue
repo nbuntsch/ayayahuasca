@@ -16,6 +16,7 @@
       ></idle-tile>
       <card-selector
         v-if="game.status === 'playing' && player.status === 'playing'"
+        :game="game"
         @play="play"
       ></card-selector>
       <over-tile v-if="game.status === 'over'"></over-tile>
@@ -102,7 +103,9 @@ export default {
         randomStack.push(player.id);
       });
       let nextPlayerIndex;
-      if (randomStack.length === 0) {
+      if (this.game.excitement === 100) {
+        nextPlayerIndex = this.playerIndex;
+      } else if (randomStack.length === 0) {
         this.game.players.forEach((player) => {
           player.status = 'idle';
         });
@@ -121,12 +124,40 @@ export default {
       }, 200);
     },
     updateCharacterValues(card) {
-      this.game.overdose += card.overdose;
+      if (this.game.overdose_delay > 0) {
+        this.game.overdose += this.game.overdose_delay;
+        this.game.overdose_delay = 0;
+      }
+      if (card.overdose_delay > 0) {
+        this.game.overdose_delay = card.overdose_delay;
+      }
+
+      switch (this.game.mood) {
+        case 100:
+          this.game.overdose += card.overdose * 2;
+          break;
+        case 50:
+          this.game.overdose += card.overdose * 1.2;
+          break;
+        case 0:
+          this.game.overdose += card.overdose;
+          break;
+        case -50:
+          this.game.overdose += card.overdose * 0.8;
+          break;
+        case -100:
+          this.game.overdose += card.overdose * 0;
+          break;
+      }
 
       if (this.game.mood >= 100 || this.game.mood <= -100) {
         this.game.mood = 0;
       } else {
         this.game.mood += card.mood;
+      }
+
+      if (this.game.excitement >= 50) {
+        this.game.overdose += 3;
       }
 
       if (this.game.excitement >= 100 || this.game.excitement <= -100) {

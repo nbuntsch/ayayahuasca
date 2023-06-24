@@ -17,8 +17,15 @@ import { db } from '@/firebase/init.js';
 import CardItem from '@/components/CardItem.vue';
 
 export default {
+  emits: ['play'],
   components: {
     CardItem,
+  },
+  props: {
+    game: {
+      type: Object,
+      required: true,
+    },
   },
   data: () => ({
     cards: [],
@@ -32,8 +39,14 @@ export default {
       snapshot.forEach((doc) => {
         this.cards.push({ ...{ id: doc.id }, ...doc.data() });
       });
+      let numberOfCards = 3;
+      if (this.game.excitement === -50) {
+        numberOfCards = 2;
+      } else if (this.game.excitement === -100) {
+        numberOfCards = 1;
+      }
       const shuffled = [...this.cards].sort(() => 0.5 - Math.random());
-      this.randomCards = shuffled.slice(0, 3);
+      this.randomCards = shuffled.slice(0, numberOfCards);
     });
   },
   methods: {
