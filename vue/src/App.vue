@@ -1,109 +1,111 @@
 <template>
-  <label>Overdose:</label>
-  <input type="text" v-model="overdose" />
-  <br />
-  <label>Mood:</label>
-  <input type="text" v-model="mood" />
-  <br />
-  <label>Excitement:</label>
-  <input type="text" v-model="excitement" />
-  <br />
-  <button @click="resetGame">Reset game</button>
+  <h1>APP</h1>
+  <div v-if="game.overdose">
+    overdose: {{ game.overdose }}<br />
+    mood: {{ game.mood }}<br />
+    excitement: {{ game.excitement }}
+  </div>
+  <button @click="createGame">Create game</button>
   <button @click="startGame">Start game</button>
-  <welcome-form v-if="!playerId" :game="game" @login="login"></welcome-form>
-  <card-selector v-else></card-selector>
-  <div>player id: {{ playerId }}</div>
-  <div>player status: {{ playerStatus }}</div>
-  <div>activation code: {{ game.activationCode }}</div>
-  <hello-world />
+  <welcome-form v-if="!gameId" @login="login"></welcome-form>
+  <div v-if="player">
+    <idle-tile v-if="player.status === 'idle'"></idle-tile>
+    <card-selector
+      v-if="player.status === 'playing'"
+      @play="play"
+    ></card-selector>
+  </div>
 </template>
 
 <script>
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import {
+  doc,
+  collection,
+  getDoc,
+  setDoc,
+  updateDoc,
+  onSnapshot,
+} from 'firebase/firestore';
 import { db } from '@/firebase/init.js';
 import { v4 as uuidv4 } from 'uuid';
 
-import HelloWorld from '@/components/HelloWorld.vue';
 import WelcomeForm from '@/components/WelcomeForm.vue';
+import IdleTile from '@/components/IdleTile.vue';
 import CardSelector from '@/components/CardSelector.vue';
 
 export default {
   components: {
-    HelloWorld,
     WelcomeForm,
+    IdleTile,
     CardSelector,
   },
   data: () => ({
-    game: [],
-    playerId: null,
+    game: {},
+    gameId: null,
+    playerIndex: null,
   }),
   computed: {
-    playerStatus() {
-      if (this.game.players && this.game.players[this.playerId]) {
-        return this.game.players[this.playerId].status;
-      } else {
-        return null;
-      }
+    player() {
+      if (!this.game.players) return null;
+      return this.game.players[this.playerIndex];
     },
-    overdose: {
-      get() {
-        return this.game.overdose;
-      },
-      set(value) {
-        this.game.overdose = value;
-        this.updateGame();
-      },
-    },
-    mood: {
-      get() {
-        return this.game.mood;
-      },
-      set(value) {
-        this.game.mood = value;
-        this.updateGame();
-      },
-    },
-    excitement: {
-      get() {
-        return this.game.excitement;
-      },
-      set(value) {
-        this.game.excitement = value;
-        this.updateGame();
-      },
-    },
-  },
-  mounted() {
-    onSnapshot(doc(db, 'games', 'game'), (snapshot) => {
-      this.game = snapshot.data();
-    });
   },
   methods: {
-    updateGame() {
-      const game = doc(db, 'games', 'game');
-      updateDoc(game, this.game);
+    createGame() {
+      const gameId = Math.floor(100000 + Math.random() * 900000);
+      const game = {
+        status: 'idle',
+        players: [],
+        overdose: 0,
+        mood: 0,
+        excitement: 0,
+      };
+
+      var gamesRef = collection(db, 'games');
+      setDoc(doc(gamesRef, 'i' + gameId), game);
+
+      alert('game id : i' + gameId);
     },
-    login() {
-      this.playerId = uuidv4();
-      this.game.players[this.playerId] = { status: 'idle' };
-      this.updateGame();
+    login(gameId) {
+      this.gameId = gameId;
+      this.createPlayer();
+      onSnapshot(doc(db, 'games', this.gameId), (snapshot) => {
+        this.game = snapshot.data();
+      });
     },
-    resetGame() {
-      this.game.players = {};
-      this.game.status = 'idle';
-      this.updateGame();
+    createPlayer() {
+      getDoc(doc(db, 'games', this.gameId)).then((game) => {
+        const data = game.data();
+        data.players.push({ id: uuidv4(), status: 'idle' });
+        const gameDoc = doc(db, 'games', this.gameId);
+        updateDoc(gameDoc, data);
+        this.playerIndex = data.players.length - 1;
+      });
     },
     startGame() {
       this.game.status = 'playing';
       this.updateGame();
       this.chooseFirstPlayer();
     },
+    updateGame() {
+      const game = doc(db, 'games', this.gameId);
+      updateDoc(game, this.game);
+    },
     chooseFirstPlayer() {
-      const keys = Object.keys(this.game.players);
-      const firstPlayerId = keys[Math.floor(Math.random() * keys.length)];
-
-      this.game.players[firstPlayerId].status = 'playing';
+      const randomIndex = Math.floor(Math.random() * this.game.players.length);
+      this.game.players[randomIndex].status = 'playing';
       this.updateGame();
+    },
+    play(card) {
+      this.game.overdose += card.overdose;
+      this.game.mood += card.mood;
+      this.game.excitement += card.excitement;
+      this.game.players[this.playerIndex].status = 'idle';
+      const randomIndex = Math.floor(Math.random() * this.game.players.length);
+      setTimeout(() => {
+        this.game.players[randomIndex].status = 'playing';
+        this.updateGame();
+      }, 200);
     },
   },
 };

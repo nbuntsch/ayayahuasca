@@ -22,7 +22,7 @@ onSnapshot(collection(db, 'games'), (snapshot) => {
   });
 });
 
-const get = async (req, res) => {
+const get = (req, res) => {
   return res.status(200).json(game);
 };
 
