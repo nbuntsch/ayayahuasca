@@ -90,13 +90,7 @@ export default {
       this.updateGame();
     },
     play(card) {
-      this.game.overdose += card.overdose;
-      this.game.mood += card.mood;
-      this.game.excitement += card.excitement;
-
-      if (this.game.overdose >= 100) {
-        this.game.status = 'over';
-      }
+      this.updateCharacterValues(card);
 
       this.game.players[this.playerIndex].status = 'hasplayed';
       const idlePlayers = this.game.players.filter(
@@ -125,6 +119,25 @@ export default {
         this.game.players[nextPlayerIndex].status = 'playing';
         this.updateGame();
       }, 200);
+    },
+    updateCharacterValues(card) {
+      this.game.overdose += card.overdose;
+
+      if (this.game.mood >= 100 || this.game.mood <= -100) {
+        this.game.mood = 0;
+      } else {
+        this.game.mood += card.mood;
+      }
+
+      if (this.game.excitement >= 100 || this.game.excitement <= -100) {
+        this.game.excitement = 0;
+      } else {
+        this.game.excitement += card.excitement;
+      }
+
+      if (this.game.overdose >= 100) {
+        this.game.status = 'over';
+      }
     },
     // tmp
     createGame() {
