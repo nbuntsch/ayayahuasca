@@ -24,6 +24,7 @@ const db = getFirestore();
 var games = [];
 
 onSnapshot(collection(db, 'games'), (snapshot) => {
+  games = [];
   snapshot.forEach((doc) => {
     games.push({ ...{ id: doc.id }, ...doc.data() });
   });
@@ -55,6 +56,7 @@ const start = async (req, res) => {
     const data = game.data();
     const randomIndex = Math.floor(Math.random() * data.players.length);
     data.players[randomIndex].status = 'playing';
+    data.status = 'playing';
     const gameDoc = doc(db, 'games', 'i' + req.params.gameId);
     updateDoc(gameDoc, data);
     return res.status(200).json({ gameId: req.params.gameId });

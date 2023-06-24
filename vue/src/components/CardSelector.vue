@@ -48,4 +48,12 @@ export default {
 .cards {
   display: flex;
 }
+
+.cards > div {
+  width: calc(100% / 3);
+
+  img {
+    width: 100%;
+  }
+}
 </style>

@@ -1,20 +1,25 @@
 <template>
-  <h1>APP</h1>
-  <div v-if="game.overdose">
-    overdose: {{ game.overdose }}<br />
-    mood: {{ game.mood }}<br />
-    excitement: {{ game.excitement }}
-  </div>
-  <button @click="createGame">Create game</button>
-  <button @click="startGame">Start game</button>
-  <welcome-form v-if="!gameId" @login="login"></welcome-form>
-  <div v-if="player">
-    <idle-tile v-if="player.status === 'idle'"></idle-tile>
-    <card-selector
-      v-if="game.status === 'playing' && player.status === 'playing'"
-      @play="play"
-    ></card-selector>
-    <over-tile v-if="game.status === 'over'"></over-tile>
+  <div class="container">
+    <h1>Ayayahuasca!</h1>
+    <div v-if="game.overdose">
+      overdose: {{ game.overdose }}<br />
+      mood: {{ game.mood }}<br />
+      excitement: {{ game.excitement }}
+    </div>
+    <button @click="createGame">Create game</button>
+    <button @click="startGame">Start game</button>
+    <welcome-form v-if="!gameId" @login="login"></welcome-form>
+    <div v-if="player">
+      <waiting-tile v-if="game.status === 'idle'"></waiting-tile>
+      <idle-tile
+        v-if="game.status === 'playing' && player.status === 'idle'"
+      ></idle-tile>
+      <card-selector
+        v-if="game.status === 'playing' && player.status === 'playing'"
+        @play="play"
+      ></card-selector>
+      <over-tile v-if="game.status === 'over'"></over-tile>
+    </div>
   </div>
 </template>
 
@@ -31,6 +36,7 @@ import { db } from '@/firebase/init.js';
 import { v4 as uuidv4 } from 'uuid';
 
 import WelcomeForm from '@/components/WelcomeForm.vue';
+import WaitingTile from '@/components/WaitingTile.vue';
 import IdleTile from '@/components/IdleTile.vue';
 import CardSelector from '@/components/CardSelector.vue';
 import OverTile from '@/components/OverTile.vue';
@@ -38,6 +44,7 @@ import OverTile from '@/components/OverTile.vue';
 export default {
   components: {
     WelcomeForm,
+    WaitingTile,
     IdleTile,
     CardSelector,
     OverTile,
@@ -143,3 +150,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+* {
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background: aqua;
+}
+</style>

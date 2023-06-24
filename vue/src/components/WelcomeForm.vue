@@ -1,7 +1,9 @@
 <template>
-  <h1>Welcome Form</h1>
-  <input type="text" v-model="activationCode" />
-  <button @click="login">Login</button>
+  <h2>Entre le code qui s'affiche sur l'écran principal!</h2>
+  <form @submit.prevent="login">
+    <input type="text" v-model="activationCode" />
+    <button>Rejoindre la partie</button>
+  </form>
 </template>
 
 <script>
