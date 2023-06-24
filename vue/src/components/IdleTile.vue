@@ -13,13 +13,5 @@
   height: 100%;
   gap: 50px;
   text-align: center;
-
-  h1 {
-    font-size: 40px;
-  }
-
-  h2 {
-    font-size: 20px;
-  }
 }
 </style>

@@ -31,15 +31,15 @@ import {
   setDoc,
   updateDoc,
   onSnapshot,
-} from 'firebase/firestore';
-import { db } from '@/firebase/init.js';
-import { v4 as uuidv4 } from 'uuid';
+} from "firebase/firestore";
+import { db } from "@/firebase/init.js";
+import { v4 as uuidv4 } from "uuid";
 
-import WelcomeForm from '@/components/WelcomeForm.vue';
-import WaitingTile from '@/components/WaitingTile.vue';
-import IdleTile from '@/components/IdleTile.vue';
-import CardSelector from '@/components/CardSelector.vue';
-import OverTile from '@/components/OverTile.vue';
+import WelcomeForm from "@/components/WelcomeForm.vue";
+import WaitingTile from "@/components/WaitingTile.vue";
+import IdleTile from "@/components/IdleTile.vue";
+import CardSelector from "@/components/CardSelector.vue";
+import OverTile from "@/components/OverTile.vue";
 
 export default {
   components: {
@@ -67,34 +67,34 @@ export default {
       this.getGame();
     },
     createPlayer() {
-      const gameRef = doc(db, 'games', this.gameId);
+      const gameRef = doc(db, "games", this.gameId);
       getDoc(gameRef).then((game) => {
         const data = game.data();
-        data.players.push({ id: uuidv4(), status: 'idle' });
+        data.players.push({ id: uuidv4(), status: "idle" });
         updateDoc(gameRef, data);
         this.playerIndex = data.players.length - 1;
       });
     },
     getGame() {
-      onSnapshot(doc(db, 'games', this.gameId), (snapshot) => {
+      onSnapshot(doc(db, "games", this.gameId), (snapshot) => {
         this.game = snapshot.data();
       });
     },
     updateGame() {
-      const game = doc(db, 'games', this.gameId);
+      const game = doc(db, "games", this.gameId);
       updateDoc(game, this.game);
     },
     chooseFirstPlayer() {
       const randomIndex = Math.floor(Math.random() * this.game.players.length);
-      this.game.players[randomIndex].status = 'playing';
+      this.game.players[randomIndex].status = "playing";
       this.updateGame();
     },
     play(card) {
       this.updateCharacterValues(card);
 
-      this.game.players[this.playerIndex].status = 'hasplayed';
+      this.game.players[this.playerIndex].status = "hasplayed";
       const idlePlayers = this.game.players.filter(
-        (player) => player.status === 'idle'
+        (player) => player.status === "idle"
       );
 
       const randomStack = [];
@@ -106,7 +106,7 @@ export default {
         nextPlayerIndex = this.playerIndex;
       } else if (randomStack.length === 0) {
         this.game.players.forEach((player) => {
-          player.status = 'idle';
+          player.status = "idle";
         });
         nextPlayerIndex = Math.floor(Math.random() * this.game.players.length);
       } else {
@@ -118,7 +118,7 @@ export default {
       }
 
       setTimeout(() => {
-        this.game.players[nextPlayerIndex].status = 'playing';
+        this.game.players[nextPlayerIndex].status = "playing";
         this.updateGame();
       }, 200);
     },
@@ -166,27 +166,27 @@ export default {
       }
 
       if (this.game.overdose >= 100) {
-        this.game.status = 'over';
+        this.game.status = "over";
       }
     },
     // tmp
     createGame() {
       const gameId = Math.floor(100000 + Math.random() * 900000);
       const game = {
-        status: 'idle',
+        status: "idle",
         players: [],
         overdose: 0,
         mood: 0,
         excitement: 0,
       };
 
-      var gamesRef = collection(db, 'games');
-      setDoc(doc(gamesRef, 'i' + gameId), game);
+      var gamesRef = collection(db, "games");
+      setDoc(doc(gamesRef, "i" + gameId), game);
 
-      alert('game id : i' + gameId);
+      alert("game id : i" + gameId);
     },
     startGame() {
-      this.game.status = 'playing';
+      this.game.status = "playing";
       this.updateGame();
       this.chooseFirstPlayer();
     },
@@ -195,14 +195,24 @@ export default {
 </script>
 
 <style lang="scss">
+:root {
+  --blue: #33e;
+  --darkblue: #008;
+  --white: #eee;
+  --black: #333;
+  --gray: #bbb;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: 20px;
+  font-family: "VT323", monospace;
 }
 
 body {
-  font-family: Lato, sans-serif;
+  background: var(--gray);
 }
 .container {
   max-width: 500px;
