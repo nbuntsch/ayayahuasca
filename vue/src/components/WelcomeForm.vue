@@ -15,7 +15,7 @@ export default {
   }),
   methods: {
     login() {
-      getDoc(doc(db, 'games', this.activationCode)).then((docSnap) => {
+      getDoc(doc(db, 'games', 'i' + this.activationCode)).then((docSnap) => {
         if (docSnap.exists()) {
           this.$emit('login', docSnap.id);
         } else {

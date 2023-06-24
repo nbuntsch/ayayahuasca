@@ -3,6 +3,8 @@ import gameService from '../services/game.service.js';
 
 const router = express.Router();
 
-router.get('/', gameService.get);
+router.get('/get/:gameId', gameService.get);
+router.post('/create', gameService.create);
+router.post('/start/:gameId', gameService.start);
 
 export default router;
