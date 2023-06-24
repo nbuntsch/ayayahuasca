@@ -47,7 +47,7 @@ const create = (req, res) => {
   var gamesRef = collection(db, 'games');
   setDoc(doc(gamesRef, 'i' + gameId), game);
 
-  return res.status(200).json({ gameId });
+  return res.status(200).send(gameId.toString());
 };
 
 const start = async (req, res) => {
