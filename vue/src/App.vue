@@ -1,24 +1,32 @@
 <template>
   <div class="container">
-    <!-- <div v-if="game.overdose">
+    <div v-if="game.overdose">
       overdose: {{ game.overdose }}<br />
       mood: {{ game.mood }}<br />
       excitement: {{ game.excitement }}
-    </div> -->
-    <!-- <button @click="createGame">Create game</button>
-    <button @click="startGame">Start game</button> -->
+    </div>
+    <button @click="createGame">Create game</button>
+    <button @click="startGame">Start game</button>
     <welcome-form v-if="!gameId" @login="login"></welcome-form>
     <element v-if="player">
       <waiting-tile v-if="game.status === 'idle'"></waiting-tile>
       <idle-tile
-        v-if="game.status === 'playing' && player.status === 'idle'"
+        v-if="
+          game.status === 'playing' &&
+          ['idle', 'hasplayed'].includes(player.status)
+        "
       ></idle-tile>
+      <eliminated-tile
+        v-if="game.status !== 'idle' && player.status === 'eliminated'"
+      >
+      </eliminated-tile>
+      <win-tile v-if="game.status !== 'idle' && player.status === 'winner'">
+      </win-tile>
       <card-selector
         v-if="game.status === 'playing' && player.status === 'playing'"
         :game="game"
         @play="play"
       ></card-selector>
-      <over-tile v-if="game.status === 'over'"></over-tile>
     </element>
   </div>
 </template>
@@ -39,7 +47,8 @@ import WelcomeForm from '@/components/WelcomeForm.vue';
 import WaitingTile from '@/components/WaitingTile.vue';
 import IdleTile from '@/components/IdleTile.vue';
 import CardSelector from '@/components/CardSelector.vue';
-import OverTile from '@/components/OverTile.vue';
+import EliminatedTile from '@/components/EliminatedTile.vue';
+import WinTile from '@/components/WinTile.vue';
 
 export default {
   components: {
@@ -47,7 +56,8 @@ export default {
     WaitingTile,
     IdleTile,
     CardSelector,
-    OverTile,
+    EliminatedTile,
+    WinTile,
   },
   data: () => ({
     game: {},
@@ -92,35 +102,70 @@ export default {
     play(card) {
       this.updateCharacterValues(card);
 
-      this.game.players[this.playerIndex].status = 'hasplayed';
+      if (this.game.overdose >= 100) {
+        this.game.players[this.playerIndex].status = 'eliminated';
+        this.game.overdose = 0;
+        this.game.mood = 0;
+        this.game.excitement = 0;
+
+        const remainingPlayers = this.game.players.filter(
+          (player) => player.status !== 'eliminated'
+        );
+
+        if (remainingPlayers.length === 1) {
+          const remainingPlayerIndex = this.game.players.findIndex(
+            (player) => player.status !== 'eliminated'
+          );
+
+          this.game.players[remainingPlayerIndex].status = 'winner';
+          this.game.status = 'over';
+
+          this.updateGame();
+        }
+      } else {
+        this.game.players[this.playerIndex].status = 'hasplayed';
+      }
+
       const idlePlayers = this.game.players.filter(
         (player) => player.status === 'idle'
       );
 
-      const randomStack = [];
-      idlePlayers.forEach((player) => {
-        randomStack.push(player.id);
-      });
-      let nextPlayerIndex;
-      if (this.game.excitement === 100) {
-        nextPlayerIndex = this.playerIndex;
-      } else if (randomStack.length === 0) {
-        this.game.players.forEach((player) => {
-          player.status = 'idle';
-        });
-        nextPlayerIndex = Math.floor(Math.random() * this.game.players.length);
-      } else {
-        const randomIndex = Math.floor(Math.random() * randomStack.length);
-        const nextPlayerId = idlePlayers[randomIndex].id;
-        nextPlayerIndex = this.game.players.findIndex(
+      const hasPlayedPlayers = this.game.players.filter(
+        (player) => player.status === 'hasplayed'
+      );
+
+      if (idlePlayers.length > 0 || hasPlayedPlayers.length > 0) {
+        let nextPlayerId;
+
+        if (idlePlayers.length > 0) {
+          const randomIndex = Math.floor(Math.random() * idlePlayers.length);
+          nextPlayerId = idlePlayers[randomIndex].id;
+        } else {
+          const randomIndex = Math.floor(
+            Math.random() * hasPlayedPlayers.length
+          );
+          nextPlayerId = hasPlayedPlayers[randomIndex].id;
+
+          this.game.players.forEach((player) => {
+            if (player.status === 'hasplayed') {
+              player.status = 'idle';
+            }
+          });
+        }
+
+        // if (this.game.excitement === 100) {
+        //   nextPlayerIndex = this.playerIndex;
+        // }
+
+        const nextPlayerIndex = this.game.players.findIndex(
           (player) => player.id === nextPlayerId
         );
-      }
 
-      setTimeout(() => {
-        this.game.players[nextPlayerIndex].status = 'playing';
-        this.updateGame();
-      }, 200);
+        setTimeout(() => {
+          this.game.players[nextPlayerIndex].status = 'playing';
+          this.updateGame();
+        }, 200);
+      }
     },
     updateCharacterValues(card) {
       if (this.game.overdose_delay > 0) {
@@ -165,9 +210,9 @@ export default {
         this.game.excitement += card.excitement;
       }
 
-      if (this.game.overdose >= 100) {
-        this.game.status = 'over';
-      }
+      // if (this.game.overdose >= 100) {
+      //   this.game.status = 'over';
+      // }
     },
     // tmp
     createGame() {

@@ -76,6 +76,7 @@ export default {
 
   > div {
     flex-basis: 100%;
+    cursor: pointer;
   }
 }
 </style>
