@@ -10,13 +10,13 @@
 </template>
 
 <script>
-import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "@/firebase/init.js";
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '@/firebase/init.js';
 
-import CardItem from "@/components/CardItem.vue";
+import CardItem from '@/components/CardItem.vue';
 
 export default {
-  emits: ["play"],
+  emits: ['play'],
   components: {
     CardItem,
   },
@@ -32,7 +32,7 @@ export default {
   }),
 
   mounted() {
-    onSnapshot(collection(db, "cards"), (snapshot) => {
+    onSnapshot(collection(db, 'cards'), (snapshot) => {
       this.cards = [];
       snapshot.forEach((doc) => {
         this.cards.push({ ...{ id: doc.id }, ...doc.data() });
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     play(card) {
-      this.$emit("play", card);
+      this.$emit('play', card);
     },
   },
 };
@@ -71,11 +71,13 @@ export default {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 20px;
 
   > div {
-    flex-basis: 100%;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
   }
 }
 </style>

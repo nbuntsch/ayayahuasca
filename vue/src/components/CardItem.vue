@@ -1,5 +1,5 @@
 <template>
-  <div class="card-item" :style="`background-image:url(${imgUrl})`"></div>
+  <img class="card-item" :src="imgUrl" alt="" />
 </template>
 
 <script>
@@ -20,10 +20,7 @@ export default {
 
 <style lang="scss">
 .card-item {
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
+  width: auto;
+  max-height: calc(100vh / 3 - 50px);
 }
 </style>

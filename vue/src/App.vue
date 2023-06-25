@@ -1,14 +1,16 @@
 <template>
   <div class="container">
-    <div v-if="game.overdose">
-      overdose: {{ game.overdose }}<br />
-      mood: {{ game.mood }}<br />
-      excitement: {{ game.excitement }}
+    <div class="dev">
+      <div v-if="game.overdose">
+        overdose: {{ game.overdose }}<br />
+        mood: {{ game.mood }}<br />
+        excitement: {{ game.excitement }}
+      </div>
+      <button @click="createGame">Create game</button>
+      <button @click="startGame">Start game</button>
     </div>
-    <button @click="createGame">Create game</button>
-    <button @click="startGame">Start game</button>
     <welcome-form v-if="!gameId" @login="login"></welcome-form>
-    <element v-if="player">
+    <template v-if="player">
       <waiting-tile v-if="game.status === 'idle'"></waiting-tile>
       <idle-tile
         v-if="
@@ -27,7 +29,7 @@
         :game="game"
         @play="play"
       ></card-selector>
-    </element>
+    </template>
   </div>
 </template>
 
@@ -240,6 +242,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import 'node_modules/pixel-borders/src/styles/pixel-borders/pixel-borders-mixins';
+
 :root {
   --blue: #33e;
   --darkblue: #008;
@@ -259,10 +263,85 @@ export default {
 body {
   background: var(--gray);
 }
+
 .container {
   max-width: 500px;
   height: 100vh;
   margin: 0 auto;
   padding: 20px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+
+  h1 {
+    margin-bottom: 20px;
+
+    img {
+      width: 320px;
+    }
+  }
+
+  h2 {
+    margin-bottom: 15px;
+  }
+
+  input {
+    display: block;
+    width: 200px;
+    height: 50px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: var(--black);
+    background: var(--white);
+
+    @include pixel-borders(
+      $corner-size: 1,
+      $border-size: 5px,
+      $border-color: var(--black),
+      $border-inset-color: true
+    );
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  button {
+    display: block;
+    width: 200px;
+    height: 50px;
+    color: var(--white);
+    background: var(--blue);
+
+    @include pixel-borders(
+      $corner-size: 2,
+      $border-size: 5px,
+      $border-color: var(--darkblue),
+      $border-inset-color: false
+    );
+  }
+}
+
+.portrait {
+  width: 200px;
+  margin-bottom: 40px;
+  @include pixel-borders(
+    $corner-size: 1,
+    $border-size: 5px,
+    $border-color: var(--black),
+    $border-inset-color: true
+  );
+}
+
+.dev {
+  position: fixed;
+  top: 0;
+  right: 0;
 }
 </style>
