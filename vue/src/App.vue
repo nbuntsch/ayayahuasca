@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="dev">
+    <!-- <div class="dev">
       <div v-if="game.overdose">
         overdose: {{ game.overdose }}<br />
         mood: {{ game.mood }}<br />
@@ -8,7 +8,7 @@
       </div>
       <button @click="createGame">Create game</button>
       <button @click="startGame">Start game</button>
-    </div>
+    </div> -->
     <welcome-form v-if="!gameId" @login="login"></welcome-form>
     <template v-if="player">
       <waiting-tile v-if="game.status === 'idle'"></waiting-tile>
@@ -331,12 +331,6 @@ body {
 .portrait {
   width: 200px;
   margin-bottom: 40px;
-  @include pixel-borders(
-    $corner-size: 1,
-    $border-size: 5px,
-    $border-color: var(--black),
-    $border-inset-color: true
-  );
 }
 
 .dev {

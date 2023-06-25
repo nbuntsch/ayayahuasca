@@ -4,7 +4,7 @@
       <img src="@/assets/img/logo.gif" alt="Ayayahuasca!" />
     </h1>
     <img
-      src="@/assets/img/tourist.png"
+      src="@/assets/img/tourist-gameover.png"
       alt="A tourisst looking for some trips"
       class="portrait"
     />
