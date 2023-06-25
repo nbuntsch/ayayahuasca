@@ -106,9 +106,12 @@ export default {
 
       if (this.game.overdose >= 100) {
         this.game.players[this.playerIndex].status = 'eliminated';
-        this.game.overdose = 0;
-        this.game.mood = 0;
-        this.game.excitement = 0;
+        setTimeout(() => {
+          this.game.overdose = 0;
+          this.game.mood = 0;
+          this.game.excitement = 0;
+          this.updateGame();
+        }, 2000);
 
         const remainingPlayers = this.game.players.filter(
           (player) => player.status !== 'eliminated'
@@ -262,6 +265,16 @@ export default {
 
 body {
   background: var(--gray);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
 }
 
 .container {
