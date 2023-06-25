@@ -1,6 +1,13 @@
 <template>
   <div class="welcome">
-    <h1>Ayayahuasca!</h1>
+    <h1>
+      <img src="@/assets/img/logo.gif" alt="Ayayahuasca!" />
+    </h1>
+    <img
+      src="@/assets/img/tourist.png"
+      alt="A tourisst looking for some trips"
+      class="portrait"
+    />
     <h2>Enter the code displayed on the main screen!</h2>
     <div class="welcome-error" :class="{ 'is-visible': error }">
       Invalid activation code.
@@ -13,20 +20,20 @@
 </template>
 
 <script>
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase/init.js';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase/init.js";
 
 export default {
-  emits: ['login'],
+  emits: ["login"],
   data: () => ({
-    activationCode: '',
+    activationCode: "",
     error: false,
   }),
   methods: {
     login() {
-      getDoc(doc(db, 'games', 'i' + this.activationCode)).then((docSnap) => {
+      getDoc(doc(db, "games", "i" + this.activationCode)).then((docSnap) => {
         if (docSnap.exists()) {
-          this.$emit('login', docSnap.id);
+          this.$emit("login", docSnap.id);
         } else {
           this.error = true;
         }
@@ -37,6 +44,19 @@ export default {
 </script>
 
 <style lang="scss">
+@import "node_modules/pixel-borders/src/styles/pixel-borders/pixel-borders-mixins";
+
+.portrait {
+  width: 200px;
+  margin-bottom: 40px;
+  @include pixel-borders(
+    $corner-size: 1,
+    $border-size: 5px,
+    $border-color: var(--black),
+    $border-inset-color: true
+  );
+}
+
 .welcome {
   display: flex;
   flex-direction: column;
@@ -46,21 +66,32 @@ export default {
   text-align: center;
 
   h1 {
-    margin-bottom: 50px;
-    font-size: 40px;
+    margin-bottom: 20px;
+
+    img {
+      width: 320px;
+    }
   }
 
   h2 {
     margin-bottom: 15px;
-    font-size: 20px;
   }
 
   input {
     display: block;
     width: 200px;
+    height: 50px;
     margin-bottom: 20px;
-    font-size: 40px;
     text-align: center;
+    color: var(--black);
+    background: var(--white);
+
+    @include pixel-borders(
+      $corner-size: 1,
+      $border-size: 5px,
+      $border-color: var(--black),
+      $border-inset-color: true
+    );
 
     &:focus {
       outline: none;
@@ -71,7 +102,15 @@ export default {
     display: block;
     width: 200px;
     height: 50px;
-    font-size: 20px;
+    color: var(--white);
+    background: var(--blue);
+
+    @include pixel-borders(
+      $corner-size: 2,
+      $border-size: 5px,
+      $border-color: var(--darkblue),
+      $border-inset-color: false
+    );
   }
 }
 

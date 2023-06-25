@@ -240,14 +240,24 @@ export default {
 </script>
 
 <style lang="scss">
+:root {
+  --blue: #33e;
+  --darkblue: #008;
+  --white: #eee;
+  --black: #333;
+  --gray: #bbb;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: 20px;
+  font-family: 'VT323', monospace;
 }
 
 body {
-  font-family: Lato, sans-serif;
+  background: var(--gray);
 }
 .container {
   max-width: 500px;
