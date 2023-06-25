@@ -9,5 +9,16 @@
       class="portrait"
     />
     <h2>Oh shit! You went too far and killed the tourist!</h2>
+    <button @click="reload">Want to play again?</button>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    reload() {
+      window.location.reload();
+    },
+  },
+};
+</script>

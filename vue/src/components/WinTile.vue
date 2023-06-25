@@ -12,5 +12,16 @@
       Congratulations! You're a responsible dealer who got the tourist high
       without killing him!
     </h2>
+    <button @click="reload">Want to play again?</button>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    reload() {
+      window.location.reload();
+    },
+  },
+};
+</script>
